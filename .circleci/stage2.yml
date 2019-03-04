@@ -15,7 +15,7 @@ x-aliases:
           - /(test-|release-).*/
 
 jobs:
-  do-fail:
+  do-succeed:
     executor: orb-tools/ci-base
     steps:
       - checkout
@@ -23,11 +23,11 @@ jobs:
           name: Wait
           command: sleep 23
       - run:
-          name: Fail
-          command: exit 1
+          name: Succeed
+          command: exit 0
 
 workflows:
   integration-workflow:
     jobs:
-      - do-fail:
+      - do-succeed:
           <<: *filter-only-special-tag
