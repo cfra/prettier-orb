@@ -1,0 +1,32 @@
+version: 2.1
+
+orbs:
+  orb-tools: circleci/orb-tools@8.3.0
+  prettier: picturepipe/prettier@dev:${CIRCLE_SHA1:0:7}
+
+x-aliases:
+  filter-only-special-tag: &filter-only-special-tag
+    filters:
+      branches:
+        ignore:
+          - /.*/
+      tags:
+        only:
+          - /(test-|release-).*/
+
+jobs:
+  do-fail:
+    docker:
+      - image: orb-tools/ci-base
+    steps:
+      - run:
+          name: Fail
+          command: |
+            sleep 10
+            exit 1
+
+workflows:
+  integration-workflow:
+    jobs:
+      - do-fail:
+          <<: *filter-only-special-tag

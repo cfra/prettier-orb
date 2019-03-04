@@ -1,0 +1,59 @@
+version: 2.1
+
+orbs:
+  orb-tools: circleci/orb-tools@8.3.0
+
+x-aliases:
+  filter-branch-or-non-special-tag: &filter-branch-or-non-special-tag
+    filters:
+      tags:
+        only:
+          - /(?!test-|release-).*/
+
+jobs:
+  trigger-integration-workflow:
+    docker:
+      - image: orb-tools/ci-base
+    steps:
+      - checkout
+      - run:
+          name: Setup git email, name and remote
+          command: |
+            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
+            git config --global user.name "$CIRCLE_USERNAME"
+            git remote set-url origin "https://${GH_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git"
+      - run:
+          name: Replace config with second stage
+          command: |
+            git mv .circleci/stage2.yml .circleci/config.yml
+            git commit -m 'Automated commit: update circleci config to stage 2'
+      - run:
+          name: Create tag and push it
+          command: |
+            if [ -n "${CIRCLE_TAG}" ]; then
+                INTEGRATION_TAG="release-${CIRCLE_TAG}-${CIRCLE_SHA1:0:7}"
+            else
+                INTEGRATION_TAG="test-${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}"
+            fi
+            git tag "${INTEGRATION_TAG}"
+            git push origin "${INTEGRATION_TAG}"
+
+workflows:
+  lint_pack-validate_publish-dev:
+    jobs:
+      - orb-tools/lint:
+          <<: *filter-branch-or-non-special-tag
+      - orb-tools/pack:
+          <<: *filter-branch-or-non-special-tag
+          requires:
+            - orb-tools/lint
+      - orb-tools/publish-dev:
+          <<: *filter-branch-or-non-special-tag
+          requires:
+            - orb-tools/pack
+          orb-name: picturepipe/prettier
+          publish-alpha-version: false
+      - trigger-integration-workflow:
+          <<: *filter-branch-or-non-special-tag
+          requires:
+            - orb-tools/publish-dev
