@@ -12,9 +12,20 @@ x-aliases:
 
 jobs:
   trigger-integration-workflow:
-    executor: orb-tools/ci-base
+    docker:
+      - image: circleci/python:stretch
     steps:
       - checkout
+      - restore_cache:
+          key: pip-v1-{{ checksum "helpers/requirements.txt" }}
+      - run:
+          name: Install python dependencies
+          command: |
+            python -m pip install --requirement helpers/requirements.txt
+      - save_cache:
+          key: pip-v1-{{ checksum "helpers/requirements.txt" }}
+          paths:
+            - ~/.cache/pip
       - run:
           name: Setup git email, name and remote
           command: |
@@ -37,6 +48,7 @@ jobs:
             fi
             git tag "${INTEGRATION_TAG}"
             git push origin "${INTEGRATION_TAG}"
+            ./helpers/await_builds_for_tag.py "${INTEGRATION_TAG}"
 
 workflows:
   lint_pack-validate_publish-dev:
