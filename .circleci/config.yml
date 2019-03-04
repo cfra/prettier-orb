@@ -12,8 +12,7 @@ x-aliases:
 
 jobs:
   trigger-integration-workflow:
-    docker:
-      - image: orb-tools/ci-base
+    executor: orb-tools/ci-base
     steps:
       - checkout
       - run:
