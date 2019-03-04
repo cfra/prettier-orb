@@ -16,14 +16,15 @@ x-aliases:
 
 jobs:
   do-fail:
-    docker:
-      - image: orb-tools/ci-base
+    executor: orb-tools/ci-base
     steps:
+      - checkout
+      - run:
+          name: Wait
+          command: sleep 23
       - run:
           name: Fail
-          command: |
-            sleep 10
-            exit 1
+          command: exit 1
 
 workflows:
   integration-workflow:
