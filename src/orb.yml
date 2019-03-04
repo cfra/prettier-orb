@@ -1,0 +1,37 @@
+version: 2.1
+
+description: >
+  Test foo
+
+examples:
+  example:
+    description:
+      Example job
+    usage:
+      version: 2.1
+
+      orbs:
+        prettier: cfra/prettier@volatile
+
+      workflows:
+        version: 2
+        prettify:
+          jobs:
+            - prettier/prettify
+
+executors:
+  default:
+    description: >
+      nodejs docker image with prettier installed
+    docker:
+      - image: quay.io/picturepipe/prettier:latest
+
+jobs:
+  prettify:
+    description: Do something
+    executor: default
+    steps:
+      - checkout
+      - run:
+          name: Prettify
+          command: prettier --help
