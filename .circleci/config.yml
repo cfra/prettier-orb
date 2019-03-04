@@ -24,7 +24,8 @@ jobs:
       - run:
           name: Replace config with second stage
           command: |
-            git mv .circleci/stage2.yml .circleci/config.yml
+            sed "s/<<orb-revision>>/${CIRCLE_SHA1:0:7}/g" < .circleci/stage2.yml > .circleci/config.yml
+            git add .circleci/config.yml
             git commit -m 'Automated commit: update circleci config to stage 2'
       - run:
           name: Create tag and push it

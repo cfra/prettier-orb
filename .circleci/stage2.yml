@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   orb-tools: circleci/orb-tools@8.3.0
-  prettier: cfra/prettier@dev:${CIRCLE_SHA1:0:7}
+  prettier: cfra/prettier@dev:<<orb-revision>>
 
 x-aliases:
   filter-only-special-tag: &filter-only-special-tag
