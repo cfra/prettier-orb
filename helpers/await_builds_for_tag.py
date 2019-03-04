@@ -42,7 +42,7 @@ def get_tag_build_status(tag):
             if build['status'] != 'success':
                 return STATUS_FAILED
         else:
-            build_running = True
+            builds_running = True
 
     if builds_running:
         return STATUS_WAIT
