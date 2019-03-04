@@ -51,7 +51,7 @@ workflows:
           <<: *filter-branch-or-non-special-tag
           requires:
             - orb-tools/pack
-          orb-name: picturepipe/prettier
+          orb-name: cfra/prettier
           publish-alpha-version: false
       - trigger-integration-workflow:
           <<: *filter-branch-or-non-special-tag
