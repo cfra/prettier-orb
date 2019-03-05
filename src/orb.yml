@@ -1,37 +1,85 @@
 version: 2.1
 
-description: >
-  Test foo
+description: |
+  Check and/or fix formatting of source code using prettier.
+  Source can be found at https://github.com/PicturePipe/prettier-orb/
 
 examples:
-  example:
-    description:
-      Example job
+  check:
+    description: &check-description >
+      Check formatting of source code using prettier. If your project
+      does not contain a .prettierrc.json, a default style will be used.
     usage:
       version: 2.1
 
       orbs:
-        prettier: cfra/prettier@volatile
+        prettier: picturepipe/prettier@volatile
 
       workflows:
-        version: 2
-        prettify:
+        build:
           jobs:
-            - prettier/prettify
+            - prettier/check
+  fix:
+    description: >
+      Fix, commit and push new formatting of source code using prettier.
+      If your project does not contain a .prettierrc.json, a default style
+      will be used.
+    usage:
+      version: 2.1
+
+      orbs:
+        prettier: picturepipe/prettier@volatile
+
+      workflows:
+        build:
+          jobs:
+            - prettier/fix
 
 executors:
   default:
     description: >
-      nodejs docker image with prettier installed
+      The docker image to use for running prettier tasks.
     docker:
       - image: quay.io/picturepipe/prettier:latest
 
+
+commands:
+  setup:
+    description: >
+      Put standard .prettierrc.json if none is present
+    steps:
+      - run:
+          name: Put default .prettierrc.json if needed
+          command: |
+            if [ ! -e ".prettierrc.json" ]; then
+                cat > .prettierrc.json << 'EOF'
+                {
+                  "overrides": [
+                    {
+                      "files": ["**/*.md"],
+                      "options": {
+                        "tabWidth": 4
+                      }
+                    },
+                  ],
+                  "printWidth": 99,
+                  "proseWrap": "always"
+                }
+                EOF
+            fi
+
 jobs:
-  prettify:
-    description: Do something
+  check:
+    description: *check-description
     executor: default
+    parameters:
+      arguments:
+        description: >
+          Arguments to pass to prettier.
+        type: string
+        default: "'./**'"
     steps:
       - checkout
       - run:
-          name: Prettify
-          command: prettier --help
+          name: Prettier Check
+          command: prettier --check <<parameters.arguments>>
