@@ -50,22 +50,23 @@ commands:
     steps:
       - run:
           name: Put default .prettierrc.json if needed
+          # The following syntax only works with tabs.
           command: |
             if [ ! -e ".prettierrc.json" ]; then
-                cat > .prettierrc.json << 'EOF'
-                {
-                  "overrides": [
-                    {
-                      "files": ["**/*.md"],
-                      "options": {
-                        "tabWidth": 4
-                      }
-                    },
-                  ],
-                  "printWidth": 99,
-                  "proseWrap": "always"
-                }
-                EOF
+            	cat > .prettierrc.json \<<-'EOF'
+            		{
+            		  "overrides": [
+            		    {
+            		      "files": ["**/*.md"],
+            		      "options": {
+            		        "tabWidth": 4
+            		      }
+            		    },
+            		  ],
+            		  "printWidth": 99,
+            		  "proseWrap": "always"
+            		}
+            	EOF
             fi
 
 jobs:
