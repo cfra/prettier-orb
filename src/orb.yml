@@ -79,6 +79,7 @@ jobs:
         default: "'./**'"
     steps:
       - checkout
+      - setup
       - run:
           name: Prettier Check
           command: prettier --check <<parameters.arguments>>
