@@ -7,8 +7,8 @@ description: |
 examples:
   check:
     description: &check-description >
-      Check formatting of source code using prettier. If your project
-      does not contain a .prettierrc.json, a default style will be used.
+      Check formatting of source code using prettier. If your project does not contain a
+      .prettierrc.json, a default style will be used.
     usage:
       version: 2.1
 
@@ -21,9 +21,8 @@ examples:
             - prettier/check
   fix:
     description: >
-      Fix, commit and push new formatting of source code using prettier.
-      If your project does not contain a .prettierrc.json, a default style
-      will be used.
+      Fix, commit and push new formatting of source code using prettier. If your project does not
+      contain a .prettierrc.json, a default style will be used.
     usage:
       version: 2.1
 
@@ -41,7 +40,6 @@ executors:
       The docker image to use for running prettier tasks.
     docker:
       - image: quay.io/picturepipe/prettier:latest
-
 
 commands:
   setup:
