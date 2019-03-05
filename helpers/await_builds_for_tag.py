@@ -34,29 +34,30 @@ STATUS_WAIT = 2
 def get_tag_build_status(tag):
     tag_build_jobs = get_tag_build_jobs(tag)
     if not tag_build_jobs:
-        return STATUS_WAIT
+        return (STATUS_WAIT, None)
 
     builds_running = False
     for build in tag_build_jobs:
         if build['lifecycle'] == 'finished':
             if build['status'] != 'success':
-                return STATUS_FAILED
+                return (STATUS_FAILED, build['build_url'])
         else:
             builds_running = True
 
     if builds_running:
-        return STATUS_WAIT
+        return (STATUS_WAIT, None)
     else:
-        return STATUS_SUCCESS
+        return (STATUS_SUCCESS, None)
 
 
 def await_builds_for_tag(tag):
     success_count = 0
     sys.stderr.write('Waiting for jobs for tag {}\n'.format(tag))
     while True:
-        build_status = get_tag_build_status(tag)
+        build_status, failed_build = get_tag_build_status(tag)
         if build_status == STATUS_FAILED:
             sys.stderr.write('Jobs for tag failed!\n')
+            sys.stderr.write('Link to first failed job: {}\n'.format(failed_build))
             return 1
         elif build_status == STATUS_SUCCESS:
             success_count += 1
