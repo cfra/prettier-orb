@@ -53,14 +53,6 @@ commands:
             if [ ! -e ".prettierrc.json" ]; then
             	cat > .prettierrc.json \<<-'EOF'
             		{
-            		  "overrides": [
-            		    {
-            		      "files": ["**/*.md"],
-            		      "options": {
-            		        "tabWidth": 4
-            		      }
-            		    }
-            		  ],
             		  "printWidth": 99,
             		  "proseWrap": "always"
             		}
