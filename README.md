@@ -4,7 +4,8 @@
 [![Orb Version](https://img.shields.io/endpoint.svg?url=https://badges.circleci.io/orb/cfra/prettier)](https://circleci.com/orbs/registry/orb/cfra/prettier "Orb Version")
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovateapp.com/ "Renovate enabled")
 
-CircleCI [orb](https://circleci.com/orbs/) to easily run [Prettier](https://prettier.io/) as part of your CI process.
+CircleCI [orb](https://circleci.com/orbs/) to easily run [Prettier](https://prettier.io/) as part
+of your CI process.
 
 ## Releasing a New Orb Version
 
@@ -17,11 +18,11 @@ CircleCI [orb](https://circleci.com/orbs/) to easily run [Prettier](https://pret
     git push --tags
     ```
 
-The orb will be built and tested on CircleCI. If it passes all tests, it will be submitted to the CircleCI orb registry.
+The orb will be built and tested on CircleCI. If it passes all tests, it will be submitted to the
+CircleCI orb registry.
 
 ## License
 
 Distributed under the MIT license.
 
 Copyright 2019 reelport GmbH
-
