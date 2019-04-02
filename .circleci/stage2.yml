@@ -5,7 +5,7 @@ orbs:
   prettier: cfra/prettier@dev:@@orb-revision@@
 
 x-aliases:
-  filter-only-special-tag: &filter-only-special-tag
+  filter-only-stage2-tag: &filter-only-stage2-tag
     filters:
       branches:
         ignore:
@@ -13,9 +13,26 @@ x-aliases:
       tags:
         only:
           - /(test-|release-).*/
+  filter-only-release-tag: &filter-only-release-tag
+    filters:
+      branches:
+        ignore:
+          - /.*/
+      tags:
+        only:
+          - /release-.*/
 
 workflows:
   integration-workflow:
     jobs:
       - prettier/check:
-          <<: *filter-only-special-tag
+          <<: *filter-only-stage2-tag
+      - orb-tools/pack:
+          requires:
+            - prettier/check
+          <<: *filter-only-release-tag
+      - orb-tools/publish:
+          requires:
+            - orb-tools/pack
+          orb-ref: cfra/prettier@@@orb-revision@@
+          <<: *filter-only-release-tag
