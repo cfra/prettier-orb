@@ -1,3 +1,4 @@
 .prettierignore
 helpers/await_builds_for_tag.py
+helpers/cleanup_old_test_tags.py
 helpers/requirements.txt
