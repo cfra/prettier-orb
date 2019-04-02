@@ -34,5 +34,5 @@ workflows:
       - orb-tools/publish:
           requires:
             - orb-tools/pack
-          orb-ref: cfra/prettier@@@orb-revision@@
+          orb-ref: cfra/prettier@${CIRCLE_TAG:8}
           <<: *filter-only-release-tag
