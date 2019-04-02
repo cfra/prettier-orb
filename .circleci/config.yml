@@ -33,6 +33,10 @@ jobs:
             git config --global user.name "$CIRCLE_USERNAME"
             git remote set-url origin "https://${GH_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git"
       - run:
+          name: Cleanup old test tags
+          command: |
+            ./helpers/cleanup_old_test_tags.py
+      - run:
           name: Replace config with second stage
           command: |
             sed "s/@@orb-revision@@/${CIRCLE_SHA1:0:7}/g" < .circleci/stage2.yml > .circleci/config.yml
