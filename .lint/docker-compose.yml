@@ -1,0 +1,8 @@
+version: "3.5"
+
+services:
+  prettier:
+    image: quay.io/picturepipe/prettier:1.16.4-2@sha256:496949fd398819ed73fd42ccfac66a36fd2154c48173d207d669f2fb8fee7193
+    volumes:
+      - ..:/home/node/app
+    command: prettier --write ./**
