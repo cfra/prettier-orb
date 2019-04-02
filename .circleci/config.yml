@@ -33,6 +33,10 @@ jobs:
             git config --global user.name "$CIRCLE_USERNAME"
             git remote set-url origin "https://${GH_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git"
       - run:
+          name: Cleanup old test tags
+          command: |
+            ./helpers/cleanup_old_test_tags.py
+      - run:
           name: Replace config with second stage
           command: |
             sed "s/@@orb-revision@@/${CIRCLE_SHA1:0:7}/g" < .circleci/stage2.yml > .circleci/config.yml
@@ -42,7 +46,7 @@ jobs:
           name: Create tag and push it
           command: |
             if [ -n "${CIRCLE_TAG}" ]; then
-                INTEGRATION_TAG="release-${CIRCLE_TAG}-${CIRCLE_SHA1:0:7}"
+                INTEGRATION_TAG="release-${CIRCLE_TAG}"
             else
                 INTEGRATION_TAG="test-${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}"
             fi
