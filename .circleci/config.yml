@@ -46,7 +46,7 @@ jobs:
           name: Create tag and push it
           command: |
             if [ -n "${CIRCLE_TAG}" ]; then
-                INTEGRATION_TAG="release-${CIRCLE_TAG}-${CIRCLE_SHA1:0:7}"
+                INTEGRATION_TAG="release-${CIRCLE_TAG}"
             else
                 INTEGRATION_TAG="test-${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}"
             fi
