@@ -59,6 +59,15 @@ workflows:
     jobs:
       - orb-tools/lint:
           <<: *filter-branch-or-non-special-tag
+          pre-steps:
+            - run:
+                name: "Install git and SSH client"
+                command: |
+                  apk add \
+                      --update-cache \
+                      --no-progress \
+                      git \
+                      openssh-client
       - orb-tools/pack:
           <<: *filter-branch-or-non-special-tag
           requires:
