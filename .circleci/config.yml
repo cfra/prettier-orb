@@ -2,83 +2,39 @@ version: 2.1
 
 orbs:
   orb-tools: circleci/orb-tools@8.3.0
+  prettier: cfra/prettier@dev:643b6e5
 
 x-aliases:
-  filter-branch-or-non-special-tag: &filter-branch-or-non-special-tag
+  filter-only-stage2-tag: &filter-only-stage2-tag
     filters:
+      branches:
+        ignore:
+          - /.*/
       tags:
         only:
-          - /(?!test-|release-).*/
-
-jobs:
-  trigger-integration-workflow:
-    docker:
-      - image: circleci/python:stretch
-    steps:
-      - checkout
-      - restore_cache:
-          key: pip-v1-{{ checksum "helpers/requirements.txt" }}
-      - run:
-          name: Install python dependencies
-          command: |
-            python -m pip install --requirement helpers/requirements.txt
-      - save_cache:
-          key: pip-v1-{{ checksum "helpers/requirements.txt" }}
-          paths:
-            - ~/.cache/pip
-      - run:
-          name: Setup git email, name and remote
-          command: |
-            git config --global user.email "$CIRCLE_USERNAME@users.noreply.github.com"
-            git config --global user.name "$CIRCLE_USERNAME"
-            git remote set-url origin "https://${GH_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git"
-      - run:
-          name: Cleanup old test tags
-          command: |
-            ./helpers/cleanup_old_test_tags.py
-      - run:
-          name: Replace config with second stage
-          command: |
-            sed "s/@@orb-revision@@/${CIRCLE_SHA1:0:7}/g" < .circleci/stage2.yml > .circleci/config.yml
-            git add .circleci/config.yml
-            git commit -m 'Automated commit: update circleci config to stage 2'
-      - run:
-          name: Create tag and push it
-          command: |
-            if [ -n "${CIRCLE_TAG}" ]; then
-                INTEGRATION_TAG="release-${CIRCLE_TAG}"
-            else
-                INTEGRATION_TAG="test-${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}"
-            fi
-            git tag "${INTEGRATION_TAG}"
-            git push origin "${INTEGRATION_TAG}"
-            ./helpers/await_builds_for_tag.py "${INTEGRATION_TAG}"
+          - /(test-|release-).*/
+  filter-only-release-tag: &filter-only-release-tag
+    filters:
+      branches:
+        ignore:
+          - /.*/
+      tags:
+        only:
+          - /release-.*/
 
 workflows:
-  lint_pack-validate_publish-dev:
+  integration-workflow:
     jobs:
-      - orb-tools/lint:
-          <<: *filter-branch-or-non-special-tag
-          pre-steps:
-            - run:
-                name: "Install git and SSH client"
-                command: |
-                  apk add \
-                      --update-cache \
-                      --no-progress \
-                      git \
-                      openssh-client
+      - prettier/check:
+          <<: *filter-only-stage2-tag
       - orb-tools/pack:
-          <<: *filter-branch-or-non-special-tag
           requires:
-            - orb-tools/lint
-      - orb-tools/publish-dev:
-          <<: *filter-branch-or-non-special-tag
+            - prettier/check
+          <<: *filter-only-release-tag
+      - orb-tools/publish:
           requires:
             - orb-tools/pack
-          orb-name: cfra/prettier
-          publish-alpha-version: false
-      - trigger-integration-workflow:
-          <<: *filter-branch-or-non-special-tag
-          requires:
-            - orb-tools/publish-dev
+          attach-workspace: yes
+          checkout: no
+          orb-ref: cfra/prettier@${CIRCLE_TAG:8}
+          <<: *filter-only-release-tag
