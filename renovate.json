@@ -1,6 +1,6 @@
 {
-  "extends": ["github>PicturePipe/renovate-config"],
-  "circleci": {
-    "fileMatch": ["(^|/).circleci/.+\\.yml$", "(^|/)src/.+\\.yml$"]
-  }
+  "extends": [
+    "github>PicturePipe/renovate-config",
+    "github>PicturePipe/renovate-config:circleci-orb"
+  ]
 }
